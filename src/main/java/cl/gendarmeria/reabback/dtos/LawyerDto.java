@@ -23,7 +23,10 @@ public class LawyerDto {
     private Date expirationDate;
     private String type;
     private String upUser;
+    private boolean active;
     //out
     private Date upDate;
+    private Date lastVisit;
+    private String lastUnit;
     private Page<RecordDto> records;
 }

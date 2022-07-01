@@ -36,6 +36,7 @@ public class WorkController {
     //lawyer methods only
     @PostMapping("/new/lawyer")
     public ResponseEntity<CustomResponse> saveLawyer(@RequestBody LawyerDto dto)throws Exception{
+        System.out.println("llama");
         lawyerService.saveLawyer(dto);
         return ResponseEntity.ok(
                 CustomResponse.builder()
@@ -48,13 +49,30 @@ public class WorkController {
         );
     }
 
-    @GetMapping("/get/lawyer")
+    @GetMapping("/get/lawyerUser")
     public ResponseEntity<CustomResponse> getLawyer(@RequestParam String run) throws Exception{
+        List<LawyerDto> data = new ArrayList();
+        data.add(lawyerService.findLawyerUser(run));
         return ResponseEntity.ok(
                 CustomResponse.builder()
                         .dateTime(now())
-                        .data(Collections.singletonList(new ArrayList<>().add(lawyerService.findLawyer(run))))
+                        .data(data)
                         .message("Lawyer retrieved")
+                        .status(OK)
+                        .statusCode(OK.value())
+                        .build()
+        );
+    }
+
+    @GetMapping("/get/lawyerList")
+    public ResponseEntity<CustomResponse> getLawyerByUser(Pageable pageable) throws Exception{
+        List<Page<?>> data = new ArrayList();
+        data.add(recordService.getLawersPage(pageable));
+        return ResponseEntity.ok(
+                CustomResponse.builder()
+                        .dateTime(now())
+                        .data(data)
+                        .message("Lawyers Page retrieved")
                         .status(OK)
                         .statusCode(OK.value())
                         .build()
@@ -115,6 +133,11 @@ public class WorkController {
                         .statusCode(OK.value())
                         .build()
         );
+    }
+
+    @GetMapping("/get/existLawyer")
+    public ResponseEntity<Boolean> getExistLawyer(@RequestParam String run) throws Exception{
+        return new ResponseEntity<>(recordService.existLowyer(run), OK);
     }
 
 }

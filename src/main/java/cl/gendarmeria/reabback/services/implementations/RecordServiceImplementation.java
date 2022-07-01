@@ -5,6 +5,7 @@ import cl.gendarmeria.reabback.domain.entitys.Record;
 import cl.gendarmeria.reabback.domain.repositorys.LawyerRepository;
 import cl.gendarmeria.reabback.domain.repositorys.RecordRepository;
 import cl.gendarmeria.reabback.domain.repositorys.UnitRepository;
+import cl.gendarmeria.reabback.dtos.LawyerDto;
 import cl.gendarmeria.reabback.dtos.RecordDto;
 import cl.gendarmeria.reabback.security.entity.Usuario;
 import cl.gendarmeria.reabback.security.service.UsuarioService;
@@ -50,6 +51,19 @@ public class RecordServiceImplementation  implements RecordService {
         }
     }
 
+    public Page<LawyerDto> getLawersPage(Pageable pageable) throws Exception{
+        try {
+            List<Lawyer> lawyers = lawyerRepository.findAll();
+            List<LawyerDto> dtos = new ArrayList<>();
+            for (Lawyer l: lawyers){
+                dtos.add(mapperLawyerDto(l));
+            }
+            return new PageImpl<>(dtos, pageable, dtos.size());
+        }catch (Exception e){
+            throw new Exception(e);
+        }
+    }
+
     @Override
     public boolean setOutDate(long id, String user) throws Exception {
         try {
@@ -71,10 +85,17 @@ public class RecordServiceImplementation  implements RecordService {
             List<Record> records = recordRepository.findByUnitCode(unitRepository.findByDescripcion(usuario.getUnidad()).getCodigo(), pageable);
             List<RecordDto> dtos = new ArrayList<>();
             for(Record r: records){
-                RecordDto dto = mapperRecordDto(r);
-                dtos.add(dto);
+                dtos.add(mapperRecordDto(r));
             }
            return new PageImpl<>(dtos, pageable, dtos.size());
+        }catch (Exception e){
+            throw new Exception(e);
+        }
+    }
+
+    public boolean existLowyer(String run) throws Exception {
+        try {
+            return lawyerRepository.existsByRun(run);
         }catch (Exception e){
             throw new Exception(e);
         }
@@ -87,7 +108,7 @@ public class RecordServiceImplementation  implements RecordService {
     public void saveRecord(RecordDto dto) throws Exception {
         try {
             Record record = new Record();
-            Lawyer lawyer = lawyerRepository.findByRun(dto.getLawyer());
+            Lawyer lawyer = lawyerRepository.findByRun(dto.getLawyerRun());
             record.setLawyer(lawyer);
             record.setUnitCode(dto.getUnitCode());
             record.setVisitDate(new Date());
@@ -148,6 +169,18 @@ public class RecordServiceImplementation  implements RecordService {
         dto.setDate(record.getVisitDate());
         dto.setOut(record.getOutDate());
         dto.setUnit(unitRepository.findById(record.getUnitCode()).get().getDescripcion());
+        return dto;
+    }
+
+    private LawyerDto mapperLawyerDto(Lawyer lawyer){
+        LawyerDto dto = new LawyerDto();
+        dto.setRun(lawyer.getRun());
+        dto.setName(lawyer.getName());
+        dto.setSurname(lawyer.getSurname());
+        dto.setType(lawyer.getType());
+        dto.setUpDate(lawyer.getUpDate());
+        dto.setExpirationDate(lawyer.getExpirationDate());
+        dto.setUpUser(lawyer.getUpUser());
         return dto;
     }
 

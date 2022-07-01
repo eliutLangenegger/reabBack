@@ -10,7 +10,7 @@ import cl.gendarmeria.reabback.dtos.LawyerDto;
  **/
 public interface LawyerService {
     Lawyer saveLawyer(LawyerDto dto) throws Exception;
-    LawyerDto findLawyer(String run) throws Exception;
+    LawyerDto findLawyerUser(String run) throws Exception;
     LawyerDto updateLawyer(LawyerDto dto) throws Exception;
 
     void changeActive(String run) throws Exception;

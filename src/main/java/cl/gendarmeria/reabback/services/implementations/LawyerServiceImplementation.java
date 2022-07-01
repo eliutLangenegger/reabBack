@@ -2,6 +2,7 @@ package cl.gendarmeria.reabback.services.implementations;
 
 import cl.gendarmeria.reabback.domain.entitys.Lawyer;
 import cl.gendarmeria.reabback.domain.repositorys.LawyerRepository;
+import cl.gendarmeria.reabback.domain.repositorys.UnitRepository;
 import cl.gendarmeria.reabback.dtos.LawyerDto;
 import cl.gendarmeria.reabback.services.LawyerService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.Date;
 public class LawyerServiceImplementation implements LawyerService {
 
     private final LawyerRepository lawyerRepository;
+    private final UnitRepository unitRepository;
 
     @Override
     public Lawyer saveLawyer(LawyerDto dto) throws Exception {
@@ -45,7 +47,7 @@ public class LawyerServiceImplementation implements LawyerService {
     }
 
     @Override
-    public LawyerDto findLawyer(String run) throws Exception {
+    public LawyerDto findLawyerUser(String run) throws Exception {
         try {
             if (lawyerRepository.existsByRun(run)){
                 Lawyer lawyer = lawyerRepository.findByRun(run);
@@ -56,6 +58,12 @@ public class LawyerServiceImplementation implements LawyerService {
                 dto.setExpirationDate(lawyer.getExpirationDate());
                 dto.setUpDate(lawyer.getUpDate());
                 dto.setUpUser(lawyer.getUpUser());
+                dto.setType(lawyer.getType());
+                dto.setActive(lawyer.isActive());
+                if (lawyer.getRecords().size()>1){
+                    dto.setLastUnit(unitRepository.findById(lawyer.getRecords().get(lawyer.getRecords().size()-1).getUnitCode()).get().getDescripcion()) ;
+                    dto.setLastVisit(lawyer.getRecords().get(lawyer.getRecords().size()-1).getVisitDate());
+                }
                 return dto;
             }else
                 return null;
