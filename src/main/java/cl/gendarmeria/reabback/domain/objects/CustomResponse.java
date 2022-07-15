@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
@@ -26,5 +27,5 @@ public class CustomResponse {
     protected String reason;
     protected String message;
     protected String developerMessage;
-    protected List<?> data;
+    protected Map<?,?> data;
 }

@@ -6,8 +6,6 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,12 +13,12 @@ import java.util.List;
  * @version 1.0
  * @since 15-07-2022
  **/
-@Getter @Setter @NoArgsConstructor
-public class RecordDto {
-    private Long id;
-    private List<String> internals = new ArrayList<>();
-    private Date visitDate;
-    private Date outDate;
-    private Integer unitCode;
-    private String lawyer;
+@Getter
+public class RecordSaveDto {
+    @NotNull (message = "Lawyer Run cant by null")
+    private String lawyerRun;
+    @NotEmpty(message = "Internal list cannot be empty")
+    private List<String> internals;
+    @NotNull(message = "Unit code cannot be empty or null")
+    private int unitCode;
 }

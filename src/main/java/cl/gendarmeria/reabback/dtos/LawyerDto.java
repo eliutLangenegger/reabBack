@@ -3,30 +3,25 @@ package cl.gendarmeria.reabback.dtos;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.domain.Page;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Christopher Langenegger
  * @version 1.0
- * @since 28-06-2022
+ * @since 15-07-2022
  **/
-@Getter
-@Setter
-@NoArgsConstructor
+@Getter @Setter @NoArgsConstructor
 public class LawyerDto {
-    //in
     private String run;
     private String name;
     private String surname;
+    private Date upDate;
     private Date expirationDate;
     private String type;
-    private String upUser;
     private boolean active;
-    //out
-    private Date upDate;
-    private Date lastVisit;
-    private String lastUnit;
-    private Page<RecordDto> records;
+    private String docId;
+    private String userUp;
+    private List<RecordDto> records;
 }

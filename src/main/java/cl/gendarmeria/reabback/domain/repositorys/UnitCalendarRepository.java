@@ -11,4 +11,6 @@ import org.springframework.stereotype.Repository;
  **/
 @Repository
 public interface UnitCalendarRepository extends JpaRepository<UnitCalendar, Long> {
+    boolean existsByUnitIdAndDependence(int cod, String dep);
+    UnitCalendar findByUnitIdAndDependence(int cod, String dep);
 }

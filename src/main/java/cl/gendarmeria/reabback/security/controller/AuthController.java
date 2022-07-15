@@ -118,9 +118,7 @@ public class AuthController {
         }else{
             if(usuarioService.existsByNombreUsuario(loginUsuario.getNombreUsuario())) {
                 Usuario user = usuarioService.getByNombreUsuario(loginUsuario.getNombreUsuario()).get();
-                System.out.println("usuario existe");
                 if (user.isActivo()) {
-                    System.out.println("usuario activo");
                     user.setPassword(passwordEncoder.encode(loginUsuario.getPassword()));
                     usuarioService.save(user);
                     Authentication authentication =

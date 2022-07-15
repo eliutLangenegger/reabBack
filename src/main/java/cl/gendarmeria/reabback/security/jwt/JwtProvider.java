@@ -69,12 +69,12 @@ public class JwtProvider {
         JWTClaimsSet claims = jwt.getJWTClaimsSet();
         String nombreUsuario = claims.getSubject();
         List<String> roles = (List<String>) claims.getClaim("roles");
-        String depto = (String)claims.getClaim("unit");
+        String unidad = (String)claims.getClaim("unit");
         String cargo = (String)claims.getClaim("cargo");
         return Jwts.builder()
                 .setSubject(nombreUsuario)
                 .claim("roles", roles)
-                .claim("unit", depto)
+                .claim("unit", unidad)
                 .claim("cargo", cargo)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + expiration))

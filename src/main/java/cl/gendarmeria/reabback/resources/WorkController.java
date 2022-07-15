@@ -1,19 +1,15 @@
 package cl.gendarmeria.reabback.resources;
 
+
 import cl.gendarmeria.reabback.domain.objects.CustomResponse;
-import cl.gendarmeria.reabback.dtos.LawyerDto;
-import cl.gendarmeria.reabback.dtos.RecordDto;
-import cl.gendarmeria.reabback.services.implementations.LawyerServiceImplementation;
-import cl.gendarmeria.reabback.services.implementations.RecordServiceImplementation;
+import cl.gendarmeria.reabback.dtos.LawyerSaveDto;
+import cl.gendarmeria.reabback.dtos.RecordSaveDto;
+import cl.gendarmeria.reabback.services.WorkService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -30,14 +26,11 @@ import static org.springframework.http.HttpStatus.OK;
 @CrossOrigin("*")
 public class WorkController {
 
-    private final LawyerServiceImplementation lawyerService;
-    private final RecordServiceImplementation recordService;
+    private final WorkService workService;
 
-    //lawyer methods only
     @PostMapping("/new/lawyer")
-    public ResponseEntity<CustomResponse> saveLawyer(@RequestBody LawyerDto dto)throws Exception{
-        System.out.println("llama");
-        lawyerService.saveLawyer(dto);
+    public ResponseEntity<CustomResponse> saveLawyer(@RequestBody LawyerSaveDto dto)throws Exception{
+        workService.saveLawyer(dto);
         return ResponseEntity.ok(
                 CustomResponse.builder()
                         .dateTime(now())
@@ -49,14 +42,12 @@ public class WorkController {
         );
     }
 
-    @GetMapping("/get/lawyerUser")
-    public ResponseEntity<CustomResponse> getLawyer(@RequestParam String run) throws Exception{
-        List<LawyerDto> data = new ArrayList();
-        data.add(lawyerService.findLawyerUser(run));
+    @GetMapping("/get/lawyer")
+    public ResponseEntity<CustomResponse> getLawyer(@RequestParam String run)throws Exception{
         return ResponseEntity.ok(
                 CustomResponse.builder()
                         .dateTime(now())
-                        .data(data)
+                        .data(workService.getBasicLawyer(run))
                         .message("Lawyer retrieved")
                         .status(OK)
                         .statusCode(OK.value())
@@ -64,42 +55,26 @@ public class WorkController {
         );
     }
 
-    @GetMapping("/get/lawyerList")
-    public ResponseEntity<CustomResponse> getLawyerByUser(Pageable pageable) throws Exception{
-        List<Page<?>> data = new ArrayList();
-        data.add(recordService.getLawersPage(pageable));
-        return ResponseEntity.ok(
-                CustomResponse.builder()
-                        .dateTime(now())
-                        .data(data)
-                        .message("Lawyers Page retrieved")
-                        .status(OK)
-                        .statusCode(OK.value())
-                        .build()
-        );
-    }
-
-    //Records methods contain
     @PostMapping("/new/record")
-    public ResponseEntity<CustomResponse> saveRecord(@RequestBody RecordDto dto)throws Exception{
-        recordService.saveRecord(dto);
+    public ResponseEntity<CustomResponse> saveLawyer(@RequestBody RecordSaveDto dto)throws Exception{
+        workService.registerNewRecord(dto);
         return ResponseEntity.ok(
                 CustomResponse.builder()
                         .dateTime(now())
                         .data(null)
-                        .message("Server created")
+                        .message("Record created")
                         .status(CREATED)
                         .statusCode(CREATED.value())
                         .build()
         );
     }
 
-    @GetMapping("/get/recordUser")
-    public ResponseEntity<CustomResponse> getRecordUser(@RequestParam String user, @RequestParam long id) throws Exception{
+    @GetMapping("/get/record")
+    public ResponseEntity<CustomResponse> getRecord(@RequestParam String user, @RequestParam long id)throws Exception{
         return ResponseEntity.ok(
                 CustomResponse.builder()
                         .dateTime(now())
-                        .data(Collections.singletonList(new ArrayList<>().add(recordService.getRecordUser(id, user))))
+                        .data(workService.getBasicRecord(id, user))
                         .message("Record retrieved")
                         .status(OK)
                         .statusCode(OK.value())
@@ -107,37 +82,35 @@ public class WorkController {
         );
     }
 
-    @PostMapping("/setOutDate")
-    public ResponseEntity<CustomResponse> setOutDate(@RequestParam String user, @RequestParam long id) throws Exception{
+    @PostMapping("/edit/record")
+    public ResponseEntity<CustomResponse> setOutDate(@RequestParam long id)throws Exception{
+        workService.setOutDate(id);
         return ResponseEntity.ok(
                 CustomResponse.builder()
                         .dateTime(now())
-                        .data(Collections.singletonList(new ArrayList<>().add(recordService.setOutDate(id, user))))
-                        .message("Record retrieved")
+                        .data(null)
+                        .message("Record created")
                         .status(OK)
                         .statusCode(OK.value())
                         .build()
         );
     }
 
-    @GetMapping("/get/recordByUnitUser")
-    public ResponseEntity<CustomResponse> getRecordByUnitUser(@RequestParam String user, Pageable pageable) throws Exception{
-        List<Page<?>> data = new ArrayList();
-        data.add(recordService.getRecodsPageUser(user, pageable));
+    @GetMapping("/get/unit-records")
+    public ResponseEntity<CustomResponse> getLUnitRecords(@RequestParam String user,
+                                                          @RequestParam(defaultValue = "0") int page,
+                                                          @RequestParam(defaultValue = "10") int size,
+                                                          @RequestParam(defaultValue = "visitDate") String order,
+                                                          @RequestParam(defaultValue = "true") boolean asc
+    )throws Exception{
         return ResponseEntity.ok(
                 CustomResponse.builder()
                         .dateTime(now())
-                        .data(data)
-                        .message("Record retrieved")
+                        .data(workService.getBasicUnitRecords(user, PageRequest.of(page, size, Sort.by(order))))
+                        .message("Unit records retrieved")
                         .status(OK)
                         .statusCode(OK.value())
                         .build()
         );
     }
-
-    @GetMapping("/get/existLawyer")
-    public ResponseEntity<Boolean> getExistLawyer(@RequestParam String run) throws Exception{
-        return new ResponseEntity<>(recordService.existLowyer(run), OK);
-    }
-
 }

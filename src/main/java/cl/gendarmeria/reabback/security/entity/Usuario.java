@@ -26,7 +26,9 @@ public class Usuario {
     @NotNull
     private String cargo;
     @NotNull
-    private String unidad;
+    private String grado;
+    @NotNull
+    private Integer unidad;
     @NotNull
     private String mail;
     private String password;
@@ -40,7 +42,7 @@ public class Usuario {
     inverseJoinColumns = @JoinColumn(name = "rol_id"))
     private Set<Rol> roles = new HashSet<>();
 
-    public Usuario(String nombres, String apellidos, String uid, String cargo, String unidad, String mail, String rut) {
+    public Usuario(String nombres, String apellidos, String uid, String cargo, int unidad, String mail, String rut) {
         this.nombres = nombres;
         this.apellidos = apellidos;
         this.nombreUsuario = uid;

@@ -16,4 +16,6 @@ public interface UnitRepository extends JpaRepository<Unit, Integer> {
     Unit findByDescripcion(String desc);
     List<Unit> findAll();
     List<Unit> findAllByRegion(int reg);
+
+    boolean existsByDescripcion(String des);
 }
